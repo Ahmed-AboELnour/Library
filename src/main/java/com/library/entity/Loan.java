@@ -1,5 +1,7 @@
 package com.library.entity;
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.util.Date;
@@ -25,4 +27,12 @@ public class Loan {
 
     @Transient
     private Long bookId;
+
+    public Loan( Book book, String borrower, Date loanDate, Date returnDate,Long bookId) {
+        this.book = book;
+        this.borrower = borrower;
+        this.loanDate = loanDate;
+        this.returnDate = returnDate;
+        this.setBookId(bookId);
+    }
 }

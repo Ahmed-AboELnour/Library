@@ -1,8 +1,8 @@
 INSERT INTO author (name, biography) VALUES ('Author 1', 'Biography 1');
 INSERT INTO author (name, biography) VALUES ('Author 2', 'Biography 2');
 
-INSERT INTO book (title, author_id, isbn, published_date, available) VALUES ('Book 1', 1, '1234567890123', '2021-01-01', true);
-INSERT INTO book (title, author_id, isbn, published_date, available) VALUES ('Book 2', 2, '1234567890124', '2022-02-02', true);
+INSERT INTO book (title, author_id, isbn, published_date, available) VALUES ('Book 1', 1, '10', '2024-07-18', true);
+INSERT INTO book (title, author_id, isbn, published_date, available) VALUES ('Book 2', 2, '11', '2024-07-20', true);
 
 INSERT INTO users (username, password, roles) VALUES ('admin', 'admin', 'ROLE_ADMIN');
 INSERT INTO users (username, password, roles) VALUES ('user', 'password', 'ROLE_USER');

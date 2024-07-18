@@ -27,6 +27,15 @@ public class Book {
     @JsonBackReference
     private Author author;
 
+    public Book(String title, String isbn, Date publishedDate, boolean available, Author author) {
+        this.id = id;
+        this.title = title;
+        this.isbn = isbn;
+        this.publishedDate = publishedDate;
+        this.available = available;
+        this.author = author;
+    }
+
     @Override
     public String toString() {
         return "Book{" +
@@ -35,6 +44,7 @@ public class Book {
                 ", isbn='" + isbn + '\'' +
                 ", publishedDate=" + publishedDate +
                 ", available=" + available +
+                ", author=" + author +
                 '}';
     }
 

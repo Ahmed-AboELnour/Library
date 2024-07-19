@@ -21,7 +21,7 @@ public class LoanController {
     }
 
     @GetMapping("/{id}")
-    public Loan getLoanById(@PathVariable Long id) {
+    public Loan getLoanById(@RequestParam("id") Long id) {
         return loanService.getLoanById(id);
     }
 
@@ -36,13 +36,13 @@ public class LoanController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteLoan(@PathVariable Long id) {
+    public ResponseEntity<String> deleteLoan(@PathVariable Long id) {
         loanService.deleteLoan(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Loan with ID " + id + " has been successfully deleted.");
     }
 
     @GetMapping("/overdue")
-    public List<Loan> getOverdueLoans(@PathVariable Date currentDate) {
+    public List<Loan> getOverdueLoans(@RequestParam("currentDate") Date currentDate) {
         return loanService.getOverdueLoans(currentDate);
     }
 }

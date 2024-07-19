@@ -57,7 +57,7 @@ public class BookServiceTest {
     }
 
     @Test
-    void testUpdateAuthor() {
+    void testUpdateBook() {
         // Mock an existing author
         Book existingBook = new Book();
         existingBook.setId(1L);

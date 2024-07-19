@@ -1,5 +1,6 @@
 package com.library.service;
 
+import com.library.exception.CustomIllegalArgumentException;
 import com.library.exception.ResourceNotFoundException;
 import com.library.entity.Book;
 import com.library.entity.Loan;
@@ -23,11 +24,14 @@ public class LoanService {
     }
 
     public Loan getLoanById(Long id) {
+        if (id == null || id <= 0) {
+            throw new CustomIllegalArgumentException("Invalid loan ID: " + id);
+        }
         return loanRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Loan not found"));
     }
 
     public Loan createLoan(Loan loan) {
-        Book book = bookRepository.findById(loan.getBookId())
+        Book book = bookRepository.findById(loan.getBook().getId())
                 .orElseThrow(() -> new IllegalArgumentException("Book not found"));
 
         loan.setBook(book);

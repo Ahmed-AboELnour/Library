@@ -24,11 +24,17 @@ public class Author {
     private String name;
     private String biography;
 
-    @OneToMany(mappedBy = "author")
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonBackReference
     private List<Book> books;
 
     public Author(String name, String biography) {
+        this.name = name;
+        this.biography = biography;
+    }
+
+    public Author(Long id,String name, String biography) {
+        this.id = id;
         this.name = name;
         this.biography = biography;
     }

@@ -25,14 +25,20 @@ public class Loan {
     private Date loanDate;
     private Date returnDate;
 
-    @Transient
-    private Long bookId;
-
-    public Loan( Book book, String borrower, Date loanDate, Date returnDate,Long bookId) {
+    public Loan( Book book, String borrower, Date loanDate, Date returnDate) {
         this.book = book;
         this.borrower = borrower;
         this.loanDate = loanDate;
         this.returnDate = returnDate;
-        this.setBookId(bookId);
+
+    }
+
+    public Loan( Long id, String borrower,Book book,Date loanDate, Date returnDate) {
+        this.id = id;
+        this.borrower = borrower;
+        this.book = book;
+        this.loanDate = loanDate;
+        this.returnDate = returnDate;
+
     }
 }

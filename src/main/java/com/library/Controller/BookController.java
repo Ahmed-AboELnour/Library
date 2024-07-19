@@ -23,7 +23,7 @@ public class BookController {
 
     @GetMapping("/{id}")
     @ApiOperation(value = "Get a book by ID")
-    public Book getBookById(@PathVariable Long id) {
+    public Book getBookById(@RequestParam("id") Long id) {
         return bookService.getBookById(id);
     }
 

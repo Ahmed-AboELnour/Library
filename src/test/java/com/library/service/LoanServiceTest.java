@@ -41,7 +41,7 @@ public class LoanServiceTest {
         DateTime dtPlusOne = dtOrg.plusDays(1);
         author = new Author("Ahmed", "Biography");
         book = new Book("History Book", "10", new Date(), true,author);
-        loan = new Loan(book, "Borrower", new Date(), dtPlusOne.toDate(),book.getId());
+        loan = new Loan(book, "Borrower", new Date(), dtPlusOne.toDate());
     }
 
     @Test

@@ -21,10 +21,6 @@ public class RegistrationService {
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        // Add default role, e.g., ROLE_USER
-        Role role = new Role();
-        role.setName(Role.RoleName.ROLE_USER);
-        //user.setAuthorities(Collections.singletonList(role));
         return userRepository.save(user);
     }
 }

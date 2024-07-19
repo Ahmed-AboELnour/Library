@@ -28,12 +28,28 @@ public class Book {
     private Author author;
 
     public Book(String title, String isbn, Date publishedDate, boolean available, Author author) {
+        this.title = title;
+        this.isbn = isbn;
+        this.publishedDate = publishedDate;
+        this.available = available;
+        this.author = author;
+    }
+
+    public Book(Long id,String title, String isbn, Date publishedDate, boolean available, Author author) {
         this.id = id;
         this.title = title;
         this.isbn = isbn;
         this.publishedDate = publishedDate;
         this.available = available;
         this.author = author;
+    }
+
+    public Book(Long id,String title, String isbn, Date publishedDate, boolean available) {
+        this.id = id;
+        this.title = title;
+        this.isbn = isbn;
+        this.publishedDate = publishedDate;
+        this.available = available;
     }
 
     @Override

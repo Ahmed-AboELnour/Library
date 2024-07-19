@@ -1,3 +1,7 @@
+DROP TABLE IF EXISTS loan;
+DROP TABLE IF EXISTS book;
+DROP TABLE IF EXISTS author;
+--DROP TABLE IF EXISTS users;
 CREATE TABLE author (
                          id BIGINT AUTO_INCREMENT PRIMARY KEY,
                          name VARCHAR(255) NOT NULL,

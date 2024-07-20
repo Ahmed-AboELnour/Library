@@ -53,7 +53,7 @@ public class AuthController {
     }
 
 
-    @PostMapping("/addRole")
+    @PostMapping("/addRoleToUser")
     public ResponseEntity<?> addRoleToUser(@RequestBody RoleAssignmentRequest request) {
         registrationService.addRoleToUser(request);
         return ResponseEntity.ok().build();

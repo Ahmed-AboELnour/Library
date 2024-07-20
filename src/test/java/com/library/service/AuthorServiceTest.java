@@ -1,23 +1,33 @@
 package com.library.service;
 
+import com.library.Controller.AuthorController;
 import com.library.entity.Author;
 import com.library.repository.AuthorRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
+
 
 import java.util.Optional;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+
+import java.util.Arrays;
+import java.util.List;
+
+
 @ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
 public class AuthorServiceTest {
 
     @Mock
@@ -29,58 +39,83 @@ public class AuthorServiceTest {
     private Author author;
 
     @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        author = new Author("Ahmed", "Biography");
+    public void setUp() {
+        author = new Author();
+        author.setId(1L);
+        author.setName("Author Name");
+        author.setBiography("Author Biography");
     }
 
     @Test
-    void testFindAuthorById() {
-        when(authorRepository.findById(anyLong())).thenReturn(Optional.of(author));
+    public void testGetAllAuthors() {
+        // Arrange
+        when(authorRepository.findAll()).thenReturn(Arrays.asList(author));
 
-        Optional<Author> foundAuthor = Optional.ofNullable(authorService.getAuthorById(1L));
+        // Act
+        List<Author> authors = authorService.getAllAuthors();
 
-        assertTrue(foundAuthor.isPresent());
-        assertEquals(author.getName(), foundAuthor.get().getName());
-        verify(authorRepository, times(1)).findById(anyLong());
+        // Assert
+        assertNotNull(authors);
+        assertEquals(1, authors.size());
+        assertEquals(author.getName(), authors.get(0).getName());
+        verify(authorRepository, times(1)).findAll();
     }
 
     @Test
-    void testSaveAuthor() {
+    public void testGetAuthorById() {
+        // Arrange
+        when(authorRepository.findById(author.getId())).thenReturn(Optional.of(author));
+
+        // Act
+        Author foundAuthor = authorService.getAuthorById(author.getId());
+
+        // Assert
+        assertNotNull(foundAuthor);
+        assertEquals(author.getName(), foundAuthor.getName());
+        verify(authorRepository, times(1)).findById(author.getId());
+    }
+
+    @Test
+    public void testCreateAuthor() {
+        // Arrange
         when(authorRepository.save(any(Author.class))).thenReturn(author);
 
-        Author savedAuthor = authorService.createAuthor(author);
+        // Act
+        Author createdAuthor = authorService.createAuthor(author);
 
-        assertEquals(author.getName(), savedAuthor.getName());
-        verify(authorRepository, times(1)).save(any(Author.class));
+        // Assert
+        assertNotNull(createdAuthor);
+        assertEquals(author.getName(), createdAuthor.getName());
+        verify(authorRepository, times(1)).save(author);
     }
 
     @Test
-    void testUpdateAuthor() {
-        // Mock an existing author
-        Author existingAuthor = new Author();
-        existingAuthor.setId(1L);
-        existingAuthor.setName("Mohamed");
+    public void testUpdateAuthor() {
+        // Arrange
+        Author updatedAuthor = new Author();
+        updatedAuthor.setName("Updated Name");
+        updatedAuthor.setBiography("Updated Biography");
 
-        // Mock the updated author data
-        Author updatedAuthorData = new Author();
-        updatedAuthorData.setId(1L); // Existing author's ID
-        updatedAuthorData.setName("Mohamed");
+        when(authorRepository.findById(author.getId())).thenReturn(Optional.of(author));
+        when(authorRepository.save(any(Author.class))).thenReturn(updatedAuthor);
 
-        // Mock repository behavior
-        when(authorRepository.findById(1L)).thenReturn(java.util.Optional.of(existingAuthor));
-        when(authorRepository.save(any(Author.class))).thenReturn(updatedAuthorData);
+        // Act
+        Author result = authorService.updateAuthor(author.getId(), updatedAuthor);
 
-        // Call the service method to update the author
-        Author updatedAuthor = authorService.updateAuthor(1L, updatedAuthorData);
-
-        // Verify the repository method was called
-        verify(authorRepository, times(1)).findById(1L);
-        verify(authorRepository, times(1)).save(any(Author.class));
-
-        // Assert that the returned author has the updated name
-        Assertions.assertEquals("Mohamed", updatedAuthor.getName());
+        // Assert
+        assertNotNull(result);
+        assertEquals(updatedAuthor.getName(), result.getName());
+        assertEquals(updatedAuthor.getBiography(), result.getBiography());
+        verify(authorRepository, times(1)).findById(author.getId());
+        verify(authorRepository, times(1)).save(author);
     }
 
+    @Test
+    public void testDeleteAuthor() {
+        // Act
+        authorService.deleteAuthor(author.getId());
 
+        // Assert
+        verify(authorRepository, times(1)).deleteById(author.getId());
+    }
 }

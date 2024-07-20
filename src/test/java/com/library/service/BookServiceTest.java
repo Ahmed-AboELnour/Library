@@ -2,87 +2,167 @@ package com.library.service;
 
 import com.library.entity.Author;
 import com.library.entity.Book;
+import com.library.repository.AuthorRepository;
 import com.library.repository.BookRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
 public class BookServiceTest {
 
     @Mock
     private BookRepository bookRepository;
 
+    @Mock
+    private AuthorRepository authorRepository;
+
     @InjectMocks
     private BookService bookService;
 
     private Book book;
+    private Author author;
 
     @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        Author author = new Author("Ahmed", "Biography");
-        book = new Book("History Book",  "10", new Date(), true,author);
+    public void setUp() {
+        author = new Author();
+        author.setId(1L);
+        author.setName("Author Name");
+        author.setBiography("Author Biography");
+
+        book = new Book();
+        book.setId(1L);
+        book.setTitle("Book Title");
+        book.setAuthor(author);
+        book.setIsbn("1234567890");
+        book.setPublishedDate(new Date());
+        book.setAvailable(true);
     }
 
     @Test
-    void testFindBookById() {
-        when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
+    public void testGetAllBooks() {
+        // Arrange
+        when(bookRepository.findAll()).thenReturn(Arrays.asList(book));
 
-        Optional<Book> foundBook = Optional.ofNullable(bookService.getBookById(1L));
+        // Act
+        List<Book> books = bookService.getAllBooks();
 
-        assertTrue(foundBook.isPresent());
-        assertEquals(book.getTitle(), foundBook.get().getTitle());
-        verify(bookRepository, times(1)).findById(anyLong());
+        // Assert
+        assertNotNull(books);
+        assertEquals(1, books.size());
+        assertEquals(book.getTitle(), books.get(0).getTitle());
+        verify(bookRepository, times(1)).findAll();
     }
 
     @Test
-    void testSaveBook() {
+    public void testGetBookById() {
+        // Arrange
+        when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
+
+        // Act
+        Book foundBook = bookService.getBookById(book.getId());
+
+        // Assert
+        assertNotNull(foundBook);
+        assertEquals(book.getTitle(), foundBook.getTitle());
+        verify(bookRepository, times(1)).findById(book.getId());
+    }
+
+    @Test
+    public void testCreateBook() {
+        // Arrange
         when(bookRepository.save(any(Book.class))).thenReturn(book);
 
-        Book savedBook = bookService.createBook(book);
+        // Act
+        Book createdBook = bookService.createBook(book);
 
-        assertEquals(book.getTitle(), savedBook.getTitle());
-        verify(bookRepository, times(1)).save(any(Book.class));
+        // Assert
+        assertNotNull(createdBook);
+        assertEquals(book.getTitle(), createdBook.getTitle());
+        verify(bookRepository, times(1)).save(book);
     }
 
-//    @Test
-//    void testUpdateBook() {
-//        // Mock an existing author
-//        Book existingBook = new Book();
-//        existingBook.setId(1L);
-//        existingBook.setTitle("title1");
-//
-//        // Mock the updated author data
-//        Book updatedBookData = new Book();
-//        updatedBookData.setId(1L); // Existing author's ID
-//        updatedBookData.setTitle("title1");
-//
-//        // Mock repository behavior
-//        when(bookRepository.findById(1L)).thenReturn(java.util.Optional.of(existingBook));
-//        when(bookRepository.save(any(Book.class))).thenReturn(updatedBookData);
-//
-//        // Call the service method to update the author
-//        Book updatedBook = bookService.updateBook(1L, updatedBookData);
-//
-//        // Verify the repository method was called
-//        verify(bookRepository, times(1)).findById(1L);
-//        verify(bookRepository, times(1)).save(any(Book.class));
-//
-//        // Assert that the returned author has the updated name
-//        Assertions.assertEquals("title1", updatedBook.getTitle());
-//    }
+    @Test
+    public void testUpdateBook() {
+        // Arrange
+        Book updatedBook = new Book();
+        updatedBook.setTitle("Updated Title");
+        updatedBook.setAuthor(author);
+        updatedBook.setIsbn("0987654321");
+        updatedBook.setPublishedDate(new Date());
+        updatedBook.setAvailable(false);
 
+        when(authorRepository.findById(author.getId())).thenReturn(Optional.of(author));
+        when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
+        when(bookRepository.save(any(Book.class))).thenReturn(updatedBook);
+
+        // Act
+        Book result = bookService.updateBook(book.getId(), updatedBook);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(updatedBook.getTitle(), result.getTitle());
+        assertEquals(updatedBook.getIsbn(), result.getIsbn());
+        assertEquals(updatedBook.getPublishedDate(), result.getPublishedDate());
+        assertFalse(result.isAvailable());
+        verify(authorRepository, times(1)).findById(author.getId());
+        verify(bookRepository, times(1)).findById(book.getId());
+        verify(bookRepository, times(1)).save(book);
+    }
+
+    @Test
+    public void testDeleteBook() {
+        // Act
+        bookService.deleteBook(book.getId());
+
+        // Assert
+        verify(bookRepository, times(1)).deleteById(book.getId());
+    }
+
+    @Test
+    public void testDeleteBookThrowsException() {
+        // Arrange
+        doThrow(new DataIntegrityViolationException("Cannot delete this book as it is referenced by other records."))
+                .when(bookRepository).deleteById(book.getId());
+
+        // Act & Assert
+        DataIntegrityViolationException exception = assertThrows(DataIntegrityViolationException.class, () -> {
+            bookService.deleteBook(book.getId());
+        });
+
+        assertEquals("Cannot delete this book as it is referenced by other records.", exception.getMessage());
+        verify(bookRepository, times(1)).deleteById(book.getId());
+    }
+
+    @Test
+    public void testSearchBooks() {
+        // Arrange
+        when(bookRepository.findByTitleContainingAndAuthorNameContaining("Book", "Author"))
+                .thenReturn(Arrays.asList(book));
+
+        // Act
+        List<Book> books = bookService.searchBooks("Book", "Author");
+
+        // Assert
+        assertNotNull(books);
+        assertEquals(1, books.size());
+        assertEquals(book.getTitle(), books.get(0).getTitle());
+        verify(bookRepository, times(1))
+                .findByTitleContainingAndAuthorNameContaining("Book", "Author");
+    }
 }

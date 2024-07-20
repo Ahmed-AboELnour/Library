@@ -25,7 +25,7 @@ public class BookController {
 
     @GetMapping("/{id}")
     @ApiOperation(value = "Get a book by ID")
-    public Book getBookById(@RequestParam("id") Long id) {
+    public Book getBookById(@PathVariable("id") Long id) {
         return bookService.getBookById(id);
     }
 
@@ -55,7 +55,7 @@ public class BookController {
     }
 
     @GetMapping("/search")
-    public List<Book> searchBooks(@RequestParam(required = false) String title, @RequestParam(required = false) String author) {
+    public List<Book> searchBooks( @RequestParam(required = false) String title, @RequestParam(required = false) String author) {
         return bookService.searchBooks(title, author);
     }
 }

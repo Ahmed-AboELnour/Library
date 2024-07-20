@@ -22,7 +22,7 @@ public class LoanController {
     }
 
     @GetMapping("/{id}")
-    public Loan getLoanById(@RequestParam("id") Long id) {
+    public Loan getLoanById(@PathVariable Long id) {
         return loanService.getLoanById(id);
     }
 

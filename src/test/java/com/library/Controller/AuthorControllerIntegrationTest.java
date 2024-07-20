@@ -1,16 +1,17 @@
 package com.library.Controller;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.library.config.JwtTokenProvider;
 import com.library.config.TestSecurityConfig;
 import com.library.entity.Author;
-import com.library.entity.Book;
-import com.library.entity.Loan;
-import com.library.service.LoanService;
+import com.library.service.AuthorService;
+import com.library.Controller.AuthorController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -19,13 +20,11 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import static org.hamcrest.Matchers.is;
+import java.util.Collections;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -33,106 +32,102 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Import(TestSecurityConfig.class)
-public class LoanControllerIntegrationTest {
+public class AuthorControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private LoanService loanService;
+    private AuthorService authorService;
 
-    private Loan loan;
-    private Book book;
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
 
     private Author author;
 
     @BeforeEach
     public void setUp() {
         author = new Author();
-        author.setName("Author1");
-        author.setBiography("Author1 Biography");
-
-        book = new Book();
-        book.setTitle("Test Book");
-        book.setAuthor(author);
-        book.setPublishedDate(new Date());
-
-        loan = new Loan();
-        loan.setId(1L);
-        loan.setBook(book);
-        loan.setBorrower("Tester");
-        loan.setLoanDate(new Date());
-        loan.setReturnDate(new Date(System.currentTimeMillis() + 1000000)); // Some future date
+        author.setId(1L);
+        author.setName("Author");
+        author.setBiography("Author Biography");
     }
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void testGetAllLoans() throws Exception {
+    public void testGetAllAuthors() throws Exception {
         // Arrange
-        List<Loan> loans = Arrays.asList(loan);
-        when(loanService.getAllLoans()).thenReturn(loans);
+        when(authorService.getAllAuthors()).thenReturn(Collections.singletonList(author));
 
         // Act & Assert
-        mockMvc.perform(get("/loans"))
+        mockMvc.perform(get("/authors"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].id", is(loan.getId().intValue())))
-                .andExpect(jsonPath("$[0].borrower", is(loan.getBorrower())));
+                .andExpect(jsonPath("$[0].id").value(author.getId()))
+                .andExpect(jsonPath("$[0].name").value(author.getName()))
+                .andExpect(jsonPath("$[0].biography").value(author.getBiography()));
     }
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void testGetLoanById() throws Exception {
+    public void testGetAuthorById() throws Exception {
         // Arrange
-        when(loanService.getLoanById(anyLong())).thenReturn(loan);
+        when(authorService.getAuthorById(anyLong())).thenReturn(author);
 
         // Act & Assert
-        mockMvc.perform(get("/loans/{id}", loan.getId()))
+        mockMvc.perform(get("/authors/{id}", author.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is(loan.getId().intValue())))
-                .andExpect(jsonPath("$.borrower", is(loan.getBorrower())));
+                .andExpect(jsonPath("$.id").value(author.getId()))
+                .andExpect(jsonPath("$.name").value(author.getName()))
+                .andExpect(jsonPath("$.biography").value(author.getBiography()));
     }
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void testCreateLoan() throws Exception {
+    public void testCreateAuthor() throws Exception {
         // Arrange
-        when(loanService.createLoan(any(Loan.class))).thenReturn(loan);
+        when(authorService.createAuthor(any(Author.class))).thenReturn(author);
 
         // Act & Assert
-        mockMvc.perform(post("/loans")
+        mockMvc.perform(post("/authors")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(loan)))
+                        .content(asJsonString(author)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is(loan.getId().intValue())))
-                .andExpect(jsonPath("$.borrower", is(loan.getBorrower())));
+                .andExpect(jsonPath("$.id").value(author.getId()))
+                .andExpect(jsonPath("$.name").value(author.getName()))
+                .andExpect(jsonPath("$.biography").value(author.getBiography()));
     }
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void testUpdateLoan() throws Exception {
+    public void testUpdateAuthor() throws Exception {
         // Arrange
-        when(loanService.updateLoan(anyLong(), any(Loan.class))).thenReturn(loan);
+        when(authorService.updateAuthor(anyLong(), any(Author.class))).thenReturn(author);
 
         // Act & Assert
-        mockMvc.perform(put("/loans/{id}", loan.getId())
+        mockMvc.perform(put("/authors/{id}", author.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(loan)))
+                        .content(asJsonString(author)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is(loan.getId().intValue())))
-                .andExpect(jsonPath("$.borrower", is(loan.getBorrower())));
+                .andExpect(jsonPath("$.id").value(author.getId()))
+                .andExpect(jsonPath("$.name").value(author.getName()))
+                .andExpect(jsonPath("$.biography").value(author.getBiography()));
     }
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void testDeleteLoan() throws Exception {
+    public void testDeleteAuthor() throws Exception {
+        // Arrange
+        doNothing().when(authorService).deleteAuthor(anyLong());
+
         // Act & Assert
-        mockMvc.perform(delete("/loans/{id}", loan.getId()))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Loan with ID " + loan.getId() + " has been successfully deleted."));
+        mockMvc.perform(delete("/authors/{id}", author.getId()))
+                .andExpect(status().isNoContent());
+
+        verify(authorService, times(1)).deleteAuthor(author.getId());
     }
 
     private String asJsonString(final Object obj) {
@@ -144,4 +139,3 @@ public class LoanControllerIntegrationTest {
         }
     }
 }
-

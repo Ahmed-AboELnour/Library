@@ -52,4 +52,13 @@ public class Book {
         this.available = available;
     }
 
+    @Override
+    public String toString() {
+        return "Book{" +
+
+                ", title='" + title + '\'' +
+                ", isbn='" + isbn + '\'' +
+                '}';
+    }
+
 }

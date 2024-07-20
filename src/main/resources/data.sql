@@ -9,4 +9,10 @@ INSERT INTO Loan (book_id, borrower, loan_Date, return_Date) VALUES (1, 'Ahmed',
 
 --INSERT INTO users (username, password, roles) VALUES ('admin', 'admin', 'ROLE_ADMIN');
 --INSERT INTO users (username, password, roles) VALUES ('user', 'password', 'ROLE_USER');
-INSERT INTO users (username, password, roles) VALUES ('testuser', '$2a$10$yJ/L8S7D/xL6s2iBN7DpB.IoohbDj.YS.Dlu9eY5G3qGtRpPTAkWS', 'ROLE_USER');
+INSERT INTO users (username, password, enabled) VALUES ('testuser', '$2a$10$yJ/L8S7D/xL6s2iBN7DpB.IoohbDj.YS.Dlu9eY5G3qGtRpPTAkWS', true);
+INSERT INTO roles (role_name) VALUES ('ADMIN');
+SET @user_id = (SELECT id FROM users WHERE username = 'testuser');
+SET @role_id = (SELECT id FROM roles WHERE role_name = 'ADMIN');
+
+-- Insert into user_roles table
+INSERT INTO user_roles (user_id, role_id) VALUES (@user_id, @role_id);

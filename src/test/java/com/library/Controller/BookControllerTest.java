@@ -15,8 +15,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 
-
+@ActiveProfiles("test")
 public class BookControllerTest {
 
     @InjectMocks
@@ -83,7 +84,7 @@ public class BookControllerTest {
     public void testDeleteBook() {
         doNothing().when(bookService).deleteBook(1L);
 
-        ResponseEntity<Void> response = bookController.deleteBook(1L);
+        ResponseEntity<String> response = bookController.deleteBook(1L);
 
         assertEquals(ResponseEntity.noContent().build(), response);
         verify(bookService, times(1)).deleteBook(1L);

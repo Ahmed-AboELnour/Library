@@ -1,14 +1,17 @@
 package com.library.service;
+import com.library.entity.Author;
 import com.library.entity.Book;
 import com.library.exception.ResourceNotFoundException;
 import com.library.repository.AuthorRepository;
 import com.library.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class BookService {
     @Autowired
     private BookRepository bookRepository;
@@ -29,9 +32,15 @@ public class BookService {
     }
 
     public Book updateBook(Long id, Book book) {
-        Book existingBook = getBookById(id);
+        Author author = authorRepository.findById(book.getAuthor().getId())
+                .orElseThrow(() -> new RuntimeException("Author not found"));
+
+        // Populate the book entity from the DTO
+        Book existingBook = bookRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Book not found"));
+
         existingBook.setTitle(book.getTitle());
-        existingBook.setAuthor(book.getAuthor());
+        existingBook.setAuthor(author);
         existingBook.setIsbn(book.getIsbn());
         existingBook.setPublishedDate(book.getPublishedDate());
         existingBook.setAvailable(book.isAvailable());

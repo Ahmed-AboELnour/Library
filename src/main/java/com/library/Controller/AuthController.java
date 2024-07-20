@@ -3,11 +3,13 @@ package com.library.Controller;
 
 import com.library.entity.User;
 import com.library.model.AuthRequest;
+import com.library.model.RoleAssignmentRequest;
 import com.library.service.RegistrationService;
 import com.library.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -48,6 +50,13 @@ public class AuthController {
     public ResponseEntity<User> registerUser(@RequestBody AuthRequest request) {
         User user = registrationService.registerUser(request);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
+    }
+
+
+    @PostMapping("/addRole")
+    public ResponseEntity<?> addRoleToUser(@RequestBody RoleAssignmentRequest request) {
+        registrationService.addRoleToUser(request);
+        return ResponseEntity.ok().build();
     }
 
 

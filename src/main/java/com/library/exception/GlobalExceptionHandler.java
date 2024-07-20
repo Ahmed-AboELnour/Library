@@ -1,5 +1,6 @@
 package com.library.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -25,5 +26,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CustomIllegalArgumentException.class)
     public ResponseEntity<String> handleCustomIllegalArgumentException(CustomIllegalArgumentException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<String> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        // Customize the response as needed
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("Cannot delete this record as it is referenced by other records.");
     }
 }

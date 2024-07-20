@@ -1,8 +1,10 @@
 package com.library.Controller;
 
-import static org.mockito.Mockito.doNothing;
+
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import com.library.entity.Book;
 import com.library.entity.Loan;
 import com.library.repository.LoanRepository;
@@ -47,8 +49,7 @@ public class LoanControllerIntegrationTest {
 
     private static final Long LOAN_ID = 1L; // Static ID for testing
 
-     Loan UPDATED_LOAN = new Loan();
-
+    Loan UPDATED_LOAN = new Loan();
 
 
     @Before
@@ -59,7 +60,7 @@ public class LoanControllerIntegrationTest {
         mockMvc = MockMvcBuilders.standaloneSetup(loanController).build();
         Book book = new Book(1L, "The Great Book", "978-3-16-148410-0", new Date(), true);
         bookService.createBook(book);
-        UPDATED_LOAN = new Loan(LOAN_ID, "Updated Borrower",book,new Date(), new Date());
+        UPDATED_LOAN = new Loan(LOAN_ID, "Updated Borrower", book, new Date(), new Date());
     }
 
     @Test
@@ -70,11 +71,22 @@ public class LoanControllerIntegrationTest {
                 .andExpect(jsonPath("$.length()").value(1));
     }
 
-//    @Test
-//    public void testGetLoanById() throws Exception {
-//        mockMvc.perform(get("/loans/{id}", 1L))
-//                .andExpect(status().isOk());
-//    }
+    @Test
+    public void testGetLoanById() throws Exception {
+        // Prepare test data
+        Loan loan = new Loan();
+        loan.setId(1L);
+
+        // Mock the service layer to return the test data
+        when(loanService.getLoanById(1L)).thenReturn(loan);
+
+        // Perform the request and verify the response
+        mockMvc.perform(get("/loans/getLoanById")
+                        .param("id", "1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1));
+    }
 
 //    @Test
 //    public void testCreateLoan() throws Exception {

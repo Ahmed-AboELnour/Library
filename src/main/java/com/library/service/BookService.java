@@ -1,10 +1,12 @@
 package com.library.service;
+
 import com.library.entity.Author;
 import com.library.entity.Book;
 import com.library.exception.ResourceNotFoundException;
 import com.library.repository.AuthorRepository;
 import com.library.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,7 +50,11 @@ public class BookService {
     }
 
     public void deleteBook(Long id) {
-        bookRepository.deleteById(id);
+        try {
+            bookRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException("Cannot delete this book as it is referenced by other records.");
+        }
     }
 
     public List<Book> searchBooks(String title, String authorName) {

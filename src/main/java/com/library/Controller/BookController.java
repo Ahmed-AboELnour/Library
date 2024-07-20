@@ -5,6 +5,7 @@ import com.library.service.BookService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,7 +46,11 @@ public class BookController {
         bookService.deleteBook(id);
             return ResponseEntity.ok("Book deleted successfully");
         } catch (DataIntegrityViolationException ex) {
-            throw new DataIntegrityViolationException("Cannot delete this book as it is referenced by other records.");
+            // Handle specific exception and return the correct status
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Cannot delete this book as it is referenced by other records.");
+        } catch (Exception ex) {
+            // Handle any other exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
         }
     }
 

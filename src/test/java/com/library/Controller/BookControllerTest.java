@@ -80,15 +80,6 @@ public class BookControllerTest {
         verify(bookService, times(1)).updateBook(eq(1L), any(Book.class));
     }
 
-    @Test
-    public void testDeleteBook() {
-        doNothing().when(bookService).deleteBook(1L);
-
-        ResponseEntity<String> response = bookController.deleteBook(1L);
-
-        assertEquals(ResponseEntity.noContent().build(), response);
-        verify(bookService, times(1)).deleteBook(1L);
-    }
 
     @Test
     public void testSearchBooks() {

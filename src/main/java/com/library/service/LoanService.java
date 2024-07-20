@@ -36,7 +36,6 @@ public class LoanService {
     public Loan createLoan(Loan loan) {
         Book book = bookRepository.findById(loan.getBook().getId())
                 .orElseThrow(() -> new IllegalArgumentException("Book not found"));
-
         loan.setBook(book);
         return loanRepository.save(loan);
     }

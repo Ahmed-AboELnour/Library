@@ -13,7 +13,6 @@ import java.util.stream.IntStream;
 
 public class PasswordEncoderUtil {
     public static void main(String[] args) {
-
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encodedPassword = passwordEncoder.encode("password123456");
         System.out.println(encodedPassword);

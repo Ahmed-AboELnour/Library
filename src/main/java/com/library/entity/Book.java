@@ -52,16 +52,4 @@ public class Book {
         this.available = available;
     }
 
-    @Override
-    public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", isbn='" + isbn + '\'' +
-                ", publishedDate=" + publishedDate +
-                ", available=" + available +
-                ", author=" + author +
-                '}';
-    }
-
 }

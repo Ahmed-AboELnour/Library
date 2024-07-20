@@ -41,8 +41,8 @@ public class LoanServiceTest {
         Date dt = new Date();
         DateTime dtOrg = new DateTime(dt);
         DateTime dtPlusOne = dtOrg.plusDays(1);
-        author = new Author("Ahmed", "Biography");
-        book = new Book("History Book", "10", new Date(), true,author);
+       // author = new Author("Ahmed", "Biography");
+        book = new Book(1L,"History Book", "10", new Date(), true);
         loan = new Loan(book, "Borrower", new Date(), dtPlusOne.toDate());
     }
 
@@ -56,5 +56,15 @@ public class LoanServiceTest {
         assertEquals(loan.getBorrower(), foundLoan.get().getBorrower());
         verify(loanRepository, times(1)).findById(anyLong());
     }
+
+//    @Test
+//    void testSaveLoan() {
+//        when(loanRepository.save(any(Loan.class))).thenReturn(loan);
+//
+//        Loan savedLoan = loanService.createLoan(loan);
+//
+//        assertEquals(loan.getLoanDate(), savedLoan.getId());
+//        verify(loanRepository, times(1)).save(any(Loan.class));
+//    }
 
 }

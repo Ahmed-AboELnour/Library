@@ -13,8 +13,7 @@ public class TestSecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> {
-            // Return a dummy UserDetails object for testing
-            if ("testUser".equals(username)) {
+            if ("user".equals(username)) {
                 return User.withUsername(username)
                         .password("password")
                         .authorities("USER")

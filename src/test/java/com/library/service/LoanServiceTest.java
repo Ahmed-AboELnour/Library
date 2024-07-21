@@ -58,13 +58,9 @@ public class LoanServiceTest {
 
     @Test
     public void testGetAllLoans() {
-        // Arrange
         when(loanRepository.findAll()).thenReturn(Arrays.asList(loan));
-
-        // Act
         List<Loan> loans = loanService.getAllLoans();
 
-        // Assert
         assertNotNull(loans);
         assertEquals(1, loans.size());
         assertEquals(loan.getBorrower(), loans.get(0).getBorrower());
@@ -73,13 +69,10 @@ public class LoanServiceTest {
 
     @Test
     public void testGetLoanById() {
-        // Arrange
         when(loanRepository.findById(loan.getId())).thenReturn(Optional.of(loan));
 
-        // Act
         Loan foundLoan = loanService.getLoanById(loan.getId());
 
-        // Assert
         assertNotNull(foundLoan);
         assertEquals(loan.getBorrower(), foundLoan.getBorrower());
         verify(loanRepository, times(1)).findById(loan.getId());
@@ -87,7 +80,6 @@ public class LoanServiceTest {
 
     @Test
     public void testGetLoanByIdThrowsExceptionForInvalidId() {
-        // Act & Assert
         CustomIllegalArgumentException exception = assertThrows(CustomIllegalArgumentException.class, () -> {
             loanService.getLoanById(-1L);
         });
@@ -97,14 +89,11 @@ public class LoanServiceTest {
 
     @Test
     public void testCreateLoan() {
-        // Arrange
         when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
         when(loanRepository.save(any(Loan.class))).thenReturn(loan);
 
-        // Act
         Loan createdLoan = loanService.createLoan(loan);
 
-        // Assert
         assertNotNull(createdLoan);
         assertEquals(loan.getBorrower(), createdLoan.getBorrower());
         verify(bookRepository, times(1)).findById(book.getId());
@@ -113,10 +102,8 @@ public class LoanServiceTest {
 
     @Test
     public void testCreateLoanThrowsExceptionForNonExistentBook() {
-        // Arrange
         when(bookRepository.findById(book.getId())).thenReturn(Optional.empty());
 
-        // Act & Assert
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
             loanService.createLoan(loan);
         });
@@ -126,7 +113,6 @@ public class LoanServiceTest {
 
     @Test
     public void testUpdateLoan() {
-        // Arrange
         Loan updatedLoan = new Loan();
         updatedLoan.setBook(book);
         updatedLoan.setBorrower("Updated Borrower");
@@ -136,10 +122,8 @@ public class LoanServiceTest {
         when(loanRepository.findById(loan.getId())).thenReturn(Optional.of(loan));
         when(loanRepository.save(any(Loan.class))).thenReturn(updatedLoan);
 
-        // Act
         Loan result = loanService.updateLoan(loan.getId(), updatedLoan);
 
-        // Assert
         assertNotNull(result);
         assertEquals(updatedLoan.getBorrower(), result.getBorrower());
         verify(loanRepository, times(1)).findById(loan.getId());
@@ -148,24 +132,19 @@ public class LoanServiceTest {
 
     @Test
     public void testDeleteLoan() {
-        // Act
         loanService.deleteLoan(loan.getId());
 
-        // Assert
         verify(loanRepository, times(1)).deleteById(loan.getId());
     }
 
     @Test
     public void testGetOverdueLoans() {
-        // Arrange
         Date currentDate = new Date();
         when(loanRepository.findByReturnDateBeforeAndBookAvailable(any(Date.class), eq(true)))
                 .thenReturn(Arrays.asList(loan));
 
-        // Act
         List<Loan> overdueLoans = loanService.getOverdueLoans(currentDate);
 
-        // Assert
         assertNotNull(overdueLoans);
         assertEquals(1, overdueLoans.size());
         assertEquals(loan.getBorrower(), overdueLoans.get(0).getBorrower());

@@ -56,10 +56,9 @@ public class AuthorControllerIntegrationTest {
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     public void testGetAllAuthors() throws Exception {
-        // Arrange
+
         when(authorService.getAllAuthors()).thenReturn(Collections.singletonList(author));
 
-        // Act & Assert
         mockMvc.perform(get("/authors"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -71,10 +70,10 @@ public class AuthorControllerIntegrationTest {
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     public void testGetAuthorById() throws Exception {
-        // Arrange
+
         when(authorService.getAuthorById(anyLong())).thenReturn(author);
 
-        // Act & Assert
+
         mockMvc.perform(get("/authors/{id}", author.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -86,10 +85,10 @@ public class AuthorControllerIntegrationTest {
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     public void testCreateAuthor() throws Exception {
-        // Arrange
+
         when(authorService.createAuthor(any(Author.class))).thenReturn(author);
 
-        // Act & Assert
+
         mockMvc.perform(post("/authors")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(author)))
@@ -103,10 +102,10 @@ public class AuthorControllerIntegrationTest {
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     public void testUpdateAuthor() throws Exception {
-        // Arrange
+
         when(authorService.updateAuthor(anyLong(), any(Author.class))).thenReturn(author);
 
-        // Act & Assert
+
         mockMvc.perform(put("/authors/{id}", author.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(author)))
@@ -120,10 +119,10 @@ public class AuthorControllerIntegrationTest {
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     public void testDeleteAuthor() throws Exception {
-        // Arrange
+
         doNothing().when(authorService).deleteAuthor(anyLong());
 
-        // Act & Assert
+
         mockMvc.perform(delete("/authors/{id}", author.getId()))
                 .andExpect(status().isNoContent());
 

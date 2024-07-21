@@ -67,11 +67,11 @@ public class BookControllerIntegrationTest {
     @Test
     @WithMockUser(username = "testuser", roles = {"ADMIN"})
     public void testGetAllBooks() throws Exception {
-        // Arrange
+
         List<Book> books = Arrays.asList(book);
         when(bookService.getAllBooks()).thenReturn(books);
 
-        // Act & Assert
+
         mockMvc.perform(get("/books"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -82,10 +82,10 @@ public class BookControllerIntegrationTest {
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     public void testGetBookById() throws Exception {
-        // Arrange
+
         when(bookService.getBookById(anyLong())).thenReturn(book);
 
-        // Act & Assert
+
         mockMvc.perform(get("/books/{id}", book.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -96,10 +96,9 @@ public class BookControllerIntegrationTest {
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     public void testCreateBook() throws Exception {
-        // Arrange
+
         when(bookService.createBook(any(Book.class))).thenReturn(book);
 
-        // Act & Assert
         mockMvc.perform(post("/books")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(book)))
@@ -112,10 +111,9 @@ public class BookControllerIntegrationTest {
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     public void testUpdateBook() throws Exception {
-        // Arrange
+
         when(bookService.updateBook(anyLong(), any(Book.class))).thenReturn(book);
 
-        // Act & Assert
         mockMvc.perform(put("/books/{id}", book.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(book)))
@@ -128,12 +126,10 @@ public class BookControllerIntegrationTest {
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     public void testDeleteBook() throws Exception {
-        // Act & Assert
         mockMvc.perform(delete("/books/{id}", book.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Book deleted successfully"));
 
-        // Verify that the delete method was called
         verify(bookService).deleteBook(book.getId());
     }
 

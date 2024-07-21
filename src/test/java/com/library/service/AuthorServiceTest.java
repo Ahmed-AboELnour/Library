@@ -48,13 +48,10 @@ public class AuthorServiceTest {
 
     @Test
     public void testGetAllAuthors() {
-        // Arrange
-        when(authorRepository.findAll()).thenReturn(Arrays.asList(author));
 
-        // Act
+        when(authorRepository.findAll()).thenReturn(Arrays.asList(author));
         List<Author> authors = authorService.getAllAuthors();
 
-        // Assert
         assertNotNull(authors);
         assertEquals(1, authors.size());
         assertEquals(author.getName(), authors.get(0).getName());
@@ -63,13 +60,9 @@ public class AuthorServiceTest {
 
     @Test
     public void testGetAuthorById() {
-        // Arrange
         when(authorRepository.findById(author.getId())).thenReturn(Optional.of(author));
-
-        // Act
         Author foundAuthor = authorService.getAuthorById(author.getId());
 
-        // Assert
         assertNotNull(foundAuthor);
         assertEquals(author.getName(), foundAuthor.getName());
         verify(authorRepository, times(1)).findById(author.getId());
@@ -77,13 +70,10 @@ public class AuthorServiceTest {
 
     @Test
     public void testCreateAuthor() {
-        // Arrange
         when(authorRepository.save(any(Author.class))).thenReturn(author);
 
-        // Act
         Author createdAuthor = authorService.createAuthor(author);
 
-        // Assert
         assertNotNull(createdAuthor);
         assertEquals(author.getName(), createdAuthor.getName());
         verify(authorRepository, times(1)).save(author);
@@ -91,7 +81,6 @@ public class AuthorServiceTest {
 
     @Test
     public void testUpdateAuthor() {
-        // Arrange
         Author updatedAuthor = new Author();
         updatedAuthor.setName("Updated Name");
         updatedAuthor.setBiography("Updated Biography");
@@ -99,10 +88,8 @@ public class AuthorServiceTest {
         when(authorRepository.findById(author.getId())).thenReturn(Optional.of(author));
         when(authorRepository.save(any(Author.class))).thenReturn(updatedAuthor);
 
-        // Act
         Author result = authorService.updateAuthor(author.getId(), updatedAuthor);
 
-        // Assert
         assertNotNull(result);
         assertEquals(updatedAuthor.getName(), result.getName());
         assertEquals(updatedAuthor.getBiography(), result.getBiography());
@@ -112,10 +99,8 @@ public class AuthorServiceTest {
 
     @Test
     public void testDeleteAuthor() {
-        // Act
         authorService.deleteAuthor(author.getId());
 
-        // Assert
         verify(authorRepository, times(1)).deleteById(author.getId());
     }
 }

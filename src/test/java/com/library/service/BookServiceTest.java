@@ -56,13 +56,10 @@ public class BookServiceTest {
 
     @Test
     public void testGetAllBooks() {
-        // Arrange
         when(bookRepository.findAll()).thenReturn(Arrays.asList(book));
 
-        // Act
         List<Book> books = bookService.getAllBooks();
 
-        // Assert
         assertNotNull(books);
         assertEquals(1, books.size());
         assertEquals(book.getTitle(), books.get(0).getTitle());
@@ -71,13 +68,10 @@ public class BookServiceTest {
 
     @Test
     public void testGetBookById() {
-        // Arrange
         when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
 
-        // Act
         Book foundBook = bookService.getBookById(book.getId());
 
-        // Assert
         assertNotNull(foundBook);
         assertEquals(book.getTitle(), foundBook.getTitle());
         verify(bookRepository, times(1)).findById(book.getId());
@@ -85,13 +79,9 @@ public class BookServiceTest {
 
     @Test
     public void testCreateBook() {
-        // Arrange
         when(bookRepository.save(any(Book.class))).thenReturn(book);
 
-        // Act
         Book createdBook = bookService.createBook(book);
-
-        // Assert
         assertNotNull(createdBook);
         assertEquals(book.getTitle(), createdBook.getTitle());
         verify(bookRepository, times(1)).save(book);
@@ -99,7 +89,6 @@ public class BookServiceTest {
 
     @Test
     public void testUpdateBook() {
-        // Arrange
         Book updatedBook = new Book();
         updatedBook.setTitle("Updated Title");
         updatedBook.setAuthor(author);
@@ -111,10 +100,8 @@ public class BookServiceTest {
         when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
         when(bookRepository.save(any(Book.class))).thenReturn(updatedBook);
 
-        // Act
         Book result = bookService.updateBook(book.getId(), updatedBook);
 
-        // Assert
         assertNotNull(result);
         assertEquals(updatedBook.getTitle(), result.getTitle());
         assertEquals(updatedBook.getIsbn(), result.getIsbn());
@@ -127,20 +114,14 @@ public class BookServiceTest {
 
     @Test
     public void testDeleteBook() {
-        // Act
         bookService.deleteBook(book.getId());
-
-        // Assert
         verify(bookRepository, times(1)).deleteById(book.getId());
     }
 
     @Test
     public void testDeleteBookThrowsException() {
-        // Arrange
         doThrow(new DataIntegrityViolationException("Cannot delete this book as it is referenced by other records."))
                 .when(bookRepository).deleteById(book.getId());
-
-        // Act & Assert
         DataIntegrityViolationException exception = assertThrows(DataIntegrityViolationException.class, () -> {
             bookService.deleteBook(book.getId());
         });
@@ -151,11 +132,9 @@ public class BookServiceTest {
 
     @Test
     public void testSearchBooks() {
-        // Arrange
         when(bookRepository.findByTitleContainingAndAuthorNameContaining("Book", "Author"))
                 .thenReturn(Arrays.asList(book));
 
-        // Act
         List<Book> books = bookService.searchBooks("Book", "Author");
 
         // Assert

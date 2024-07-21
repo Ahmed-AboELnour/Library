@@ -68,11 +68,9 @@ public class LoanControllerIntegrationTest {
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     public void testGetAllLoans() throws Exception {
-        // Arrange
         List<Loan> loans = Arrays.asList(loan);
         when(loanService.getAllLoans()).thenReturn(loans);
 
-        // Act & Assert
         mockMvc.perform(get("/loans"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -83,10 +81,8 @@ public class LoanControllerIntegrationTest {
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     public void testGetLoanById() throws Exception {
-        // Arrange
         when(loanService.getLoanById(anyLong())).thenReturn(loan);
 
-        // Act & Assert
         mockMvc.perform(get("/loans/{id}", loan.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -97,10 +93,9 @@ public class LoanControllerIntegrationTest {
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     public void testCreateLoan() throws Exception {
-        // Arrange
+
         when(loanService.createLoan(any(Loan.class))).thenReturn(loan);
 
-        // Act & Assert
         mockMvc.perform(post("/loans")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(loan)))
@@ -113,10 +108,8 @@ public class LoanControllerIntegrationTest {
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     public void testUpdateLoan() throws Exception {
-        // Arrange
         when(loanService.updateLoan(anyLong(), any(Loan.class))).thenReturn(loan);
 
-        // Act & Assert
         mockMvc.perform(put("/loans/{id}", loan.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(loan)))
@@ -129,7 +122,7 @@ public class LoanControllerIntegrationTest {
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     public void testDeleteLoan() throws Exception {
-        // Act & Assert
+
         mockMvc.perform(delete("/loans/{id}", loan.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Loan with ID " + loan.getId() + " has been successfully deleted."));
